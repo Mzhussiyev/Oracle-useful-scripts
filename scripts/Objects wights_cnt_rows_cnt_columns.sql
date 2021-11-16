@@ -1,0 +1,32 @@
+select /*+ parallel(2)*/
+ CASE WHEN OB.OBJECT_NAME LIKE '%$_MZ$_%'    ESCAPE '$' THEN 'MEDEU'
+      WHEN OB.OBJECT_NAME LIKE '%$_AA$_%'    ESCAPE '$' THEN 'AIBEK'
+      ELSE 'UNKNOWN' 
+  END OWNER_NAME,
+ OB.OBJECT_NAME,
+ MAX(OB.OBJECT_TYPE) AS OBJECT_TYPE,
+ OB.STATUS,
+ MIN(OB.CREATED)                                            AS CREATED,
+ MAX(OB.LAST_DDL_TIME)                                      AS LAST_DDL_TIME,
+ COUNT(DISTINCT TC.COLUMN_NAME)                             AS CNT_COLUMN,
+ LPad(To_Char(MAX(TAB.NUM_ROWS), '999,999,999,990'), 16)    AS NUM_ROWS,
+ LPad(To_Char(SUM(S.BYTES /*/ 1024*/), '999,999,999,999,990'), 20)  AS Byte, 
+ LPad(To_Char(SUM(S.BYTES / 1024 / 1024 ), '999,999,999,999,990'), 20)  AS Mbyte
+
+  from dba_objects ob
+  LEFT JOIN DBA_SEGMENTS S
+    ON OB.OBJECT_NAME = S.segment_name
+   AND OB.OWNER = S.owner
+  LEFT JOIN DBA_TABLES TAB
+    ON OB.OBJECT_NAME = TAB.TABLE_NAME
+   AND TAB.OWNER = OB.OWNER
+  LEFT JOIN DBA_TAB_COLUMNS TC
+    ON TAB.TABLE_NAME = TC.TABLE_NAME
+   AND TC.OWNER = OB.OWNER
+   
+ where ob.OWNER IN ('AP_CRM')
+   AND OB.status = 'INVALID'
+   
+ GROUP BY OB.OBJECT_NAME,
+          OB.STATUS
+ ORDER BY 1 

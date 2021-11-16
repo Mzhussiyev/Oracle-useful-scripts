@@ -1,0 +1,4 @@
+select * from table(DBADMIN.LIB_EXPLAIN.get_expl_plan('
+select * from Dual
+') 
+);

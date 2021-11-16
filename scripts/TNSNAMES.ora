@@ -1,0 +1,34 @@
+#
+# Warranty!
+# Do not rename, move or delete that file
+# Only edit agree
+#
+#--------------
+# Actual
+#--------------
+
+#prod-dev-qa
+
+
+(DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = KZCL01.KZ.PROD)(PORT = 1521))
+    (CONNECT_DATA =
+     (UR = A)
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = HDWKZ.KZ.PROD)
+    )
+  )
+
+
+HDWKZ.HOMECREDIT.KZ=
+(DESCRIPTION_LIST =
+  (LOAD_BALANCE=OFF)
+  (FAILOVER=ON)
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = DBHDWKZ.PROD.AL.ITC.HOMECREDIT.KZ)(PORT = 1521))
+    (CONNECT_DATA =
+      (UR = A)
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = HDWKZ.HOMECREDIT.KZ)
+    )
+  )
