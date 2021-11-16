@@ -1,0 +1,87 @@
+-- Create table
+create table AP_PUBLIC.CORE_LOG_DETAIL
+(
+  log_pk        INTEGER not null,
+  run_id        INTEGER not null,
+  work_day      DATE not null,
+  log_module    VARCHAR2(30) not null,
+  log_process   VARCHAR2(50) not null,
+  log_id        VARCHAR2(10),
+  log_info      VARCHAR2(200),
+  started       DATE default ( SysDate ) not null,
+  finished      DATE,
+  dml_rows      INTEGER,
+  log_result    VARCHAR2(200),
+  command       CLOB,
+  err_code      NUMBER,
+  err_msg       VARCHAR2(1000),
+  err_stack     VARCHAR2(1000),
+  aud_db_user   VARCHAR2(256) default User,
+  aud_os_user   VARCHAR2(256) default Sys_Context( 'USERENV', 'OS_USER' ),
+  aud_sid       VARCHAR2(256) default Sys_Context( 'USERENV', 'SID' ),
+  aud_bg_job_id VARCHAR2(256) default Sys_Context( 'USERENV', 'BG_JOB_ID' ),
+  aud_curr_sch  VARCHAR2(256) default Sys_Context( 'USERENV', 'CURRENT_SCHEMA' )
+)
+partition by range (WORK_DAY)
+subpartition by list (LOG_MODULE)
+(
+  partition P201603 values less than (TO_DATE(' 2016-04-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
+    tablespace AP_PUBLIC
+    pctfree 10
+    initrans 4
+    maxtrans 255
+  (
+    subpartition P201603_SP_DEFAULT values (DEFAULT) tablespace AP_PUBLIC
+  ),
+  partition SYS_P155506 values less than (TO_DATE(' 2017-03-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
+    tablespace AP_PUBLIC
+    pctfree 10
+    initrans 4
+    maxtrans 255
+  (
+    subpartition SYS_SUBP155505 values (DEFAULT) tablespace AP_PUBLIC
+  ),
+  partition SYS_P165691 values less than (TO_DATE(' 2017-04-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
+    tablespace AP_PUBLIC
+    pctfree 10
+    initrans 4
+    maxtrans 255
+  (
+    subpartition SYS_SUBP165690 values (DEFAULT) tablespace AP_PUBLIC
+  ),
+  partition SYS_P173560 values less than (TO_DATE(' 2017-05-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
+    tablespace AP_PUBLIC
+    pctfree 10
+    initrans 4
+    maxtrans 255
+  (
+    subpartition SYS_SUBP173559 values (DEFAULT) tablespace AP_PUBLIC
+  ),
+  partition SYS_P181865 values less than (TO_DATE(' 2017-06-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
+    tablespace AP_PUBLIC
+    pctfree 10
+    initrans 4
+    maxtrans 255
+  (
+    subpartition SYS_SUBP181864 values (DEFAULT) tablespace AP_PUBLIC
+  ),
+  partition SYS_P192474 values less than (TO_DATE(' 2017-07-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
+    tablespace AP_PUBLIC
+    pctfree 10
+    initrans 4
+    maxtrans 255
+  (
+    subpartition SYS_SUBP192473 values (DEFAULT) tablespace AP_PUBLIC
+  )
+);
+-- Create/Recreate indexes 
+create index AP_PUBLIC.CORE_LOG_DETAIL_IX01 on AP_PUBLIC.CORE_LOG_DETAIL (WORK_DAY, RUN_ID)
+  local;
+create unique index AP_PUBLIC.CORE_LOG_DETAIL_UQ01 on AP_PUBLIC.CORE_LOG_DETAIL (LOG_PK, LOG_MODULE, WORK_DAY)
+  local;
+-- Grant/Revoke object privileges 
+grant select on AP_PUBLIC.CORE_LOG_DETAIL to AP_CRM with grant option;
+grant alter on AP_PUBLIC.CORE_LOG_DETAIL to AP_PUBLIC_ADMIN;
+grant insert, update, delete on AP_PUBLIC.CORE_LOG_DETAIL to AP_PUBLIC_MODIFY;
+grant select on AP_PUBLIC.CORE_LOG_DETAIL to AP_PUBLIC_SELECT;
+grant select on AP_PUBLIC.CORE_LOG_DETAIL to PUBLIC;
